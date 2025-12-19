@@ -1,10 +1,17 @@
 import React, { useContext, useState } from 'react'
 import { assets } from "../assets/assets"
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
 function Navbar() {
     const [visible, setVisible] = useState(false);
-    const { setShowSearch, getCartCount } = useContext(ShopContext);
+    const navigate = useNavigate();
+    const { setShowSearch, getCartCount, token, setToken, setCartItems } = useContext(ShopContext);
+    const logout = () => {
+        localStorage.removeItem('token');
+        setToken('');
+        setCartItems({});
+        navigate('/login', { replace: true });
+    }
     return (
         <div className='flex items-center justify-between py-5 font-medium'>
             <Link to='/'><img src={assets.logo} className='w-36' alt='' /></Link>
@@ -28,24 +35,22 @@ function Navbar() {
             </ul>
             <div className='flex items-center gap-6'>
                 <img onClick={() => setShowSearch(true)} src={assets.search_icon} className='w-5 cursor-pointer' alt='' />
-
                 <div className='group relative'>
-                    <Link to={'/login'}>
-                        <img src={assets.profile_icon} className='w-5 cursor-pointer' />
-                    </Link>
-                    <div className="group-hover:block hidden absolute left-1/2 top-full pt-4 transform -translate-x-1/2">
-                        <div className="inline-flex flex-col items-stretch gap-2 whitespace-nowrap bg-white shadow-md rounded-lg p-2">
-                            <p className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
-                                My Profile
-                            </p>
-                            <p className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
-                                Orders
-                            </p>
-                            <p className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
-                                Logout
-                            </p>
-                        </div>
-                    </div>
+                    <img onClick={() => token ? null : navigate('/login')} src={assets.profile_icon} className='w-5 cursor-pointer' />
+                    {token &&
+                        <div className="group-hover:block hidden absolute left-1/2 top-full pt-4 transform -translate-x-1/2">
+                            <div className="inline-flex flex-col items-stretch gap-2 whitespace-nowrap bg-white shadow-md rounded-lg p-2">
+                                <p className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
+                                    My Profile
+                                </p>
+                                <p onClick={() => navigate('/orders')} className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
+                                    Orders
+                                </p>
+                                <p onClick={logout} className="cursor-pointer group-hover:opacity-50 group-hover:hover:opacity-100 hover:font-semibold transition">
+                                    Logout
+                                </p>
+                            </div>
+                        </div>}
                 </div>
 
                 <Link to='/cart' className='relative'>
