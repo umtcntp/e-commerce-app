@@ -25,6 +25,17 @@ function Cart() {
     setCartData(tempData);
   }, [cartItems])
 
+  if (!products.length && cartData.length) {
+    return (
+      <div className='border-t pt-14'>
+        <div className='text-2xl mb-3'>
+          <Title text1={'YOUR'} text2={'CART'} />
+        </div>
+        <div className="p-6 text-gray-700">Loading cart...</div>
+      </div>
+    );
+  }
+
   return (
     <div className='border-t pt-14'>
       <div className='text-2xl mb-3'>
@@ -34,6 +45,7 @@ function Cart() {
         {
           cartData.map((item, index) => {
             const productData = products.find((product) => product._id === item._id);
+            if (!productData) return null;
             return (
               <div key={index} className='py-4 border-t border-b text-gray-700 grid grig-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
                 <div className='flex items-start gap-6'>
