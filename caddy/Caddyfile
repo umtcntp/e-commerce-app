@@ -1,0 +1,16 @@
+{
+	local_certs
+}
+
+auth.localhost {
+	encode gzip
+	reverse_proxy frontend:5173
+}
+
+api.auth.localhost {
+	reverse_proxy api:4000
+}
+
+admin.auth.localhost {
+  reverse_proxy admin:5174
+}
