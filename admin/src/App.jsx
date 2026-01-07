@@ -1,5 +1,5 @@
 import React from 'react'
-import Add from './pages/add'
+import Add from './pages/Add'
 import List from './pages/List'
 import Orders from './pages/Orders'
 import Navbar from './components/Navbar'
