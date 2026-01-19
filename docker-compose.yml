@@ -1,8 +1,8 @@
-name: e-commerce-app
+name: e-commerce-app-test
 
 services:
   api:
-    container_name: ecommerce-api
+    container_name: api-test
     build:
       context: ./backend
       target: production
@@ -10,9 +10,10 @@ services:
     env_file: ./backend/.env
     command: npm start
     networks:
-      - e-commerce-app
+      - proxy
 
   frontend:
+    container_name: frontend-test
     build:
       context: ./frontend
       target: production
@@ -20,30 +21,12 @@ services:
         VITE_BACKEND_URL: https://api.${DOMAIN_NAME}
     restart: unless-stopped
     networks:
-      - e-commerce-app
+      - proxy
     depends_on:
       - api
-
-  caddy:
-    build:
-      context: ./caddy
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - e-commerce-app
-    depends_on:
-      - api
-      - frontend
-      - admin
 
   admin:
+    container_name: admin-test
     build:
       context: ./admin
       target: production
@@ -51,13 +34,11 @@ services:
         VITE_BACKEND_URL: https://api.${DOMAIN_NAME}
     restart: unless-stopped
     networks:
-      - e-commerce-app
+      - proxy
     depends_on:
       - api
 
-volumes:
-  caddy_data:
-  caddy_config:
 networks:
-  e-commerce-app:
-    driver: bridge
+  proxy:
+    external: true
+
